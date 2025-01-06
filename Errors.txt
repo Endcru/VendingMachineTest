@@ -1,0 +1,868 @@
+1.
+Код до исправления:
+
+    def getCoins2(self):
+        if self.__mode == VendingMachine.Mode.OPERATION:
+            return self.coins1
+        return self.__coins2
+
+
+Данные для которых наблюдается некоректное поведение:
+
+Вызов метода getCoins2() при остутсвии изменения полей и без активации режима отладки
+
+Полученный результат: AttributeError: 'VendingMachine' object has no attribute 'coins1'
+Ожиадемый результат: 0
+
+Код после исправления:
+
+
+    def getCoins2(self):
+        if self.__mode == VendingMachine.Mode.OPERATION:
+            return 0
+        return self.__coins2
+
+
+2.
+
+Код до исправления:
+
+
+    def fillProducts(self):
+        self.__num1 = self.__max2
+        self.__num2 = self.__max2
+        return VendingMachine.Response.OK
+
+
+Данные для которых наблюдается некоректное поведение:
+
+Вызов метода fillProducts() при остутсвии изменения полей и без активации режима отладки
+
+Полученный результат: 1 (OK)
+Ожиадемый результат: 2 (ILLEGAL_OPERATION)
+
+Код после исправления:
+
+    def fillProducts(self):
+        if self.__mode != VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        self.__num1 = self.__max2
+        self.__num2 = self.__max2
+        return VendingMachine.Response.OK
+
+3.
+
+Код до исправления:
+
+
+    def fillProducts(self):
+        if self.__mode != VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        self.__num1 = self.__max2
+        self.__num2 = self.__max2
+        return VendingMachine.Response.OK
+
+
+Данные для которых наблюдается некоректное поведение:
+
+Вызов метода self.VM.getNumberOfProduct1() после вызова fillProducts() в режиме отладки
+
+Полученный результат: 40
+Ожиадемый результат: 30
+
+Код после исправления:
+
+
+    def fillProducts(self):
+        if self.__mode != VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        self.__num1 = self.__max1
+        self.__num2 = self.__max2
+        return VendingMachine.Response.OK
+
+
+4.
+
+Код до исправления:
+
+    def fillCoins(self, c1: int, c2: int):
+        if self.__mode == VendingMachine.Mode.OPERATION:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if c1 <= 0 or c2 > self.__maxc1:
+            return VendingMachine.Response.INVALID_PARAM
+        if c1 <= 0 or c2 > self.__maxc2:
+            return VendingMachine.Response.INVALID_PARAM
+        self.__coins1 = c1
+        self.__coins2 = c2
+        return VendingMachine.Response.OK
+
+
+Данные для которых наблюдается некоректное поведение:
+
+Вызов метода fillCoins() c параметрами maxc1 + 1, 0 (maxc1 + 1 = 51) в режими отладки
+
+
+Полученный результат: 1 (OK)
+Ожиадемый результат: 3 (INVALID_PARAM)
+
+Код после исправления:
+
+
+    def fillCoins(self, c1: int, c2: int):
+        if self.__mode == VendingMachine.Mode.OPERATION:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if c1 <= 0 or c1 > self.__maxc1:
+            return VendingMachine.Response.INVALID_PARAM
+        if c2 <= 0 or c2 > self.__maxc2:
+            return VendingMachine.Response.INVALID_PARAM
+        self.__coins1 = c1
+        self.__coins2 = c2
+        return VendingMachine.Response.OK
+
+
+
+5.
+
+Код до исправления:
+
+    def setPrices(self, p1: int, p2: int):
+        if self.__mode == VendingMachine.Mode.OPERATION:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        self.__price1 = p1
+        self.__price2 = p2
+        return VendingMachine.Response.OK
+
+Данные для которых наблюдается некоректное поведение:
+
+Вызов метода setPrices() c параметрами 0, 0 в режими отладки
+
+
+Полученный результат: 1 (OK)
+Ожиадемый результат: 3 (INVALID_PARAM)
+
+Код после исправления:
+
+    def setPrices(self, p1: int, p2: int):
+        if self.__mode == VendingMachine.Mode.OPERATION:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if p1 <= 0 or p2 <= 0:
+            return VendingMachine.Response.INVALID_PARAM
+        self.__price1 = p1
+        self.__price2 = p2
+        return VendingMachine.Response.OK
+
+6.
+
+Код до исправления:
+
+def putCoin1(self):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if self.__coins2 == self.__maxc2:
+            return VendingMachine.Response.CANNOT_PERFORM
+        self.__balance += self.__coinval2
+        self.__coins2 += 1
+        return VendingMachine.Response.OK
+
+Данные для которых наблюдается некоректное поведение:
+
+Вызов метода getCoins1() в режиме отладки после вызова метода putCoin1() без режима отладки
+
+Полученный результат: 0
+Ожиадемый результат: 1
+
+Код после исправления:
+
+    def setPrices(self, p1: int, p2: int):
+        if self.__mode == VendingMachine.Mode.OPERATION:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if p1 <= 0 or p2 <= 0:
+            return VendingMachine.Response.INVALID_PARAM
+        self.__price1 = p1
+        self.__price2 = p2
+        return VendingMachine.Response.OK
+
+7.
+
+Код до исправления:
+
+    def putCoin1(self):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if self.__coins2 == self.__maxc2:
+            return VendingMachine.Response.CANNOT_PERFORM
+        self.__balance += self.__coinval2
+        self.__coins1 += 1
+        return VendingMachine.Response.OK
+
+Данные для которых наблюдается некоректное поведение:
+
+Вызов метода getCurrentBalance() после вызова метода putCoin1() без режима отладки
+
+Полученный результат: 2
+Ожиадемый результат: 1
+
+Код после исправления:
+
+    def putCoin1(self):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if self.__coins2 == self.__maxc2:
+            return VendingMachine.Response.CANNOT_PERFORM
+        self.__balance += self.__coinval1
+        self.__coins1 += 1
+        return VendingMachine.Response.OK
+
+8.
+
+Код до исправления:
+
+    def putCoin1(self):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if self.__coins2 == self.__maxc2:
+            return VendingMachine.Response.CANNOT_PERFORM
+        self.__balance += self.__coinval1
+        self.__coins1 += 1
+        return VendingMachine.Response.OK
+
+Данные для которых наблюдается некоректное поведение:
+
+Вызов метода putCoin1() без режима отладки после вызова maxc1(50) вызовов putCoin1(), когда количество монет 1 должно было стать максимальным
+
+Полученный результат: 1 (OK)
+Ожиадемый результат: 4 (CANNOT_PERFORM)
+
+Код после исправления:
+
+    def putCoin1(self):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if self.__coins1 == self.__maxc1:
+            return VendingMachine.Response.CANNOT_PERFORM
+        self.__balance += self.__coinval1
+        self.__coins1 += 1
+        return VendingMachine.Response.O
+
+9.
+
+Код до исправления:
+
+
+    def enterAdminMode(self, code: int):
+        if self.__balance != 0:
+            return VendingMachine.Response.UNSUITABLE_CHANGE
+        if code != self.__id:
+            return VendingMachine.Response.INVALID_PARAM
+        self.__mode = VendingMachine.Mode.ADMINISTERING
+        return VendingMachine.Response.OK
+
+Данные для которых наблюдается некоректное поведение:
+
+Вызов метода enterAdminMode(adminCode) без режима отладки после вызова maxc1(50) вызовов putCoin1()
+
+Полученный результат: 6 (OUNSUITABLE_CHANGE)
+Ожиадемый результат: 4 (CANNOT_PERFORM)
+
+Код после исправления:
+
+    def enterAdminMode(self, code: int):
+        if self.__balance != 0:
+            return VendingMachine.Response.CANNOT_PERFORM
+        if code != self.__id:
+            return VendingMachine.Response.INVALID_PARAM
+        self.__mode = VendingMachine.Mode.ADMINISTERING
+        return VendingMachine.Response.OK
+
+10.
+
+Код до исправления:
+
+
+
+    def putCoin2(self):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if self.__coins1 == self.__maxc1:
+            return VendingMachine.Response.CANNOT_PERFORM
+        self.__balance += self.__coinval2
+        self.__coins2 += 1
+        return VendingMachine.Response.OK
+
+Данные для которых наблюдается некоректное поведение:
+
+Вызов метода getCurrentBalance() после вызова метода putCoin1() без режима отладки
+
+Полученный результат: 1
+Ожиадемый результат: 2
+
+Код после исправления:
+
+    def putCoin2(self):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if self.__coins1 == self.__maxc1:
+            return VendingMachine.Response.CANNOT_PERFORM
+        self.__balance += self.__coinval2
+        self.__coins2 += 1
+        return VendingMachine.Response.OK
+
+
+11.
+
+Код до исправления:
+
+    def putCoin2(self):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if self.__coins1 == self.__maxc1:
+            return VendingMachine.Response.CANNOT_PERFORM
+        self.__balance += self.__coinval2
+        self.__coins2 += 1
+        return VendingMachine.Response.OK
+
+Данные для которых наблюдается некоректное поведение:
+
+Вызов метода putCoin2() без режима отладки после вызова maxc2(50) вызовов putCoin2(), когда количество монет 2 должно было стать максимальным
+
+Полученный результат: 1 (OK)
+Ожиадемый результат: 4 (CANNOT_PERFORM)
+
+Код после исправления:
+
+    def putCoin2(self):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if self.__coins2 == self.__maxc2:
+            return VendingMachine.Response.CANNOT_PERFORM
+        self.__balance += self.__coinval2
+        self.__coins2 += 1
+        return VendingMachine.Response.OK
+
+12.
+
+Код до исправления:
+
+    def returnMoney(self):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if self.__balance == 0:
+            return VendingMachine.Response.OK
+        if self.__balance > self.__coins1 * self.__coinval1 + self.__coins2 * self.__coinval2:
+            return VendingMachine.Response.TOO_BIG_CHANGE
+        if self.__balance > self.__coins2 * self.__coinval2:
+            # using coinval1 == 1
+            self.__coins1 -= self.__balance - self.__coins2 * self.__coinval2
+            self.__coins2 = 0
+            self.__balance = 0
+            return VendingMachine.Response.OK
+        if self.__balance % self.__coinval2 == 0:
+            self.__coins2 -= self.__balance // self.__coinval2
+            self.__balance = 0
+            return VendingMachine.Response.OK
+        if self.__coins1 == 0:
+            # using coinval1 == 1
+            return VendingMachine.Response.UNSUITABLE_CHANGE
+        # using coinval1 == 1
+        self.__coins1 -= self.__balance // self.__coinval2
+        self.__coins2 -= 1
+        self.__balance = 0
+        return VendingMachine.Response.OK
+
+Данные для которых наблюдается некоректное поведение:
+
+В автомат водились в режиме пользователя монетки номиналом 1 в размере 9ти, но в автомате для выдачи была 1 монетка номинала 1 и 10 монет номниала 2. 
+Вызвана функция returnMoney(), а затем в режиме отладки getCoins1()
+Полученный результат: 6
+Ожиадемый результат: 9
+
+Код после исправления:
+
+    def returnMoney(self):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if self.__balance == 0:
+            return VendingMachine.Response.OK
+        if self.__balance > self.__coins1 * self.__coinval1 + self.__coins2 * self.__coinval2:
+            return VendingMachine.Response.TOO_BIG_CHANGE
+        if self.__balance > self.__coins2 * self.__coinval2:
+            # using coinval1 == 1
+            self.__coins1 -= self.__balance - self.__coins2 * self.__coinval2
+            self.__coins2 = 0
+            self.__balance = 0
+            return VendingMachine.Response.OK
+        if self.__balance % self.__coinval2 == 0:
+            self.__coins2 -= self.__balance // self.__coinval2
+            self.__balance = 0
+            return VendingMachine.Response.OK
+        if self.__coins1 == 0:
+            # using coinval1 == 1
+            return VendingMachine.Response.UNSUITABLE_CHANGE
+        # using coinval1 == 1
+        self.__coins1 -= 1
+        self.__coins2 -= self.__balance // self.__coinval2
+        self.__balance = 0
+        return VendingMachine.Response.OK
+
+13.
+
+Код до исправления:
+
+    def giveProduct1(self, number: int):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if number <= 0 or number >= self.__max1:
+            return VendingMachine.Response.INVALID_PARAM
+        if number > self.__num1:
+            return VendingMachine.Response.INSUFFICIENT_PRODUCT
+
+        res = self.__balance - number * self.__price1
+        if res < 0:
+            return VendingMachine.Response.INSUFFICIENT_MONEY
+        if res > self.__coins1 * self.__coinval1 + self.__coins2 * self.__coinval2:
+            return VendingMachine.Response.TOO_BIG_CHANGE
+        if res > self.__coins2 * self.__coinval2:
+            # using coinval1 == 1
+            self.__coins1 -= res - self.__coins2 * self.__coinval2
+            self.__coins2 = 0
+            self.__balance = 0
+            self.__num1 -= number
+            return VendingMachine.Response.OK
+        if res % self.__coinval2 == 0:
+            self.__coins2 -= res / self.__coinval2
+            self.__balance = 0
+            self.__num1 -= number
+            return VendingMachine.Response.OK
+        if self.__coins1 == 0:
+            return VendingMachine.Response.UNSUITABLE_CHANGE
+        self.__coins1 -= 1
+        self.__coins2 -= res // self.__coinval2
+        self.__balance = 0
+        self.__num1 -= number
+        return VendingMachine.Response.OK
+
+Данные для которых наблюдается некоректное поведение:
+
+После заполнения в автомате продукта 1, и его единоразовой покупки производится попытка купить max1(50) продуктов 1 через функцию giveProduct1(self, number: int) без режима отладки
+Полученный результат: 3
+Ожиадемый результат: 7
+
+Код после исправления:
+
+    def giveProduct1(self, number: int):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if number <= 0 or number > self.__max1:
+            return VendingMachine.Response.INVALID_PARAM
+        if number > self.__num1:
+            return VendingMachine.Response.INSUFFICIENT_PRODUCT
+
+        res = self.__balance - number * self.__price1
+        if res < 0:
+            return VendingMachine.Response.INSUFFICIENT_MONEY
+        if res > self.__coins1 * self.__coinval1 + self.__coins2 * self.__coinval2:
+            return VendingMachine.Response.TOO_BIG_CHANGE
+        if res > self.__coins2 * self.__coinval2:
+            # using coinval1 == 1
+            self.__coins1 -= res - self.__coins2 * self.__coinval2
+            self.__coins2 = 0
+            self.__balance = 0
+            self.__num1 -= number
+            return VendingMachine.Response.OK
+        if res % self.__coinval2 == 0:
+            self.__coins2 -= res / self.__coinval2
+            self.__balance = 0
+            self.__num1 -= number
+            return VendingMachine.Response.OK
+        if self.__coins1 == 0:
+            return VendingMachine.Response.UNSUITABLE_CHANGE
+        self.__coins1 -= 1
+        self.__coins2 -= res // self.__coinval2
+        self.__balance = 0
+        self.__num1 -= number
+        return VendingMachine.Response.OK
+
+13.
+
+Код до исправления:
+
+    def giveProduct2(self, number: int):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if number <= 0 or number >= self.__max2:
+            return VendingMachine.Response.INVALID_PARAM
+        if number > self.__num2:
+            return VendingMachine.Response.INSUFFICIENT_PRODUCT
+
+        res = self.__balance - number * self.__price2
+        if res < 0:
+            return VendingMachine.Response.INSUFFICIENT_MONEY
+        if res > self.__coins1 * self.__coinval1 + self.__coins2 * self.__coinval2:
+            return VendingMachine.Response.INSUFFICIENT_MONEY
+        if res > self.__coins2 * self.__coinval2:
+            # using coinval1 == 1
+            self.__coins1 -= res - self.__coins2 * self.__coinval2
+            self.__coins2 = 0
+            self.__balance = 0
+            self.__num2 -= number
+            return VendingMachine.Response.OK
+        if res % self.__coinval2 == 0:
+            self.__coins2 -= res / self.__coinval2
+            self.__balance = 0
+            self.__num2 -= number
+            return VendingMachine.Response.OK
+        if self.__coins1 == 0:
+            return VendingMachine.Response.UNSUITABLE_CHANGE
+        self.__coins1 -= res // self.__coinval2
+        self.__coins2 -= 1
+        self.__balance = 0
+        self.__num2 -= number
+        return VendingMachine.Response.OK
+
+Данные для которых наблюдается некоректное поведение:
+
+После заполнения в автомате продукта 2, и его единоразовой покупки производится попытка купить max2(50) продуктов 2 через функцию giveProduct2(self, number: int) без режима отладки
+Полученный результат: 3
+Ожиадемый результат: 7
+
+Код после исправления:
+
+def giveProduct2(self, number: int):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if number <= 0 or number > self.__max2:
+            return VendingMachine.Response.INVALID_PARAM
+        if number > self.__num2:
+            return VendingMachine.Response.INSUFFICIENT_PRODUCT
+
+        res = self.__balance - number * self.__price2
+        if res < 0:
+            return VendingMachine.Response.INSUFFICIENT_MONEY
+        if res > self.__coins1 * self.__coinval1 + self.__coins2 * self.__coinval2:
+            return VendingMachine.Response.INSUFFICIENT_MONEY
+        if res > self.__coins2 * self.__coinval2:
+            # using coinval1 == 1
+            self.__coins1 -= res - self.__coins2 * self.__coinval2
+            self.__coins2 = 0
+            self.__balance = 0
+            self.__num2 -= number
+            return VendingMachine.Response.OK
+        if res % self.__coinval2 == 0:
+            self.__coins2 -= res / self.__coinval2
+            self.__balance = 0
+            self.__num2 -= number
+            return VendingMachine.Response.OK
+        if self.__coins1 == 0:
+            return VendingMachine.Response.UNSUITABLE_CHANGE
+        self.__coins1 -= res // self.__coinval2
+        self.__coins2 -= 1
+        self.__balance = 0
+        self.__num2 -= number
+        return VendingMachine.Response.OK
+
+14.
+
+Код до исправления:
+
+    def giveProduct2(self, number: int):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if number <= 0 or number > self.__max2:
+            return VendingMachine.Response.INVALID_PARAM
+        if number > self.__num2:
+            return VendingMachine.Response.INSUFFICIENT_PRODUCT
+
+        res = self.__balance - number * self.__price2
+        if res < 0:
+            return VendingMachine.Response.INSUFFICIENT_MONEY
+        if res > self.__coins1 * self.__coinval1 + self.__coins2 * self.__coinval2:
+            return VendingMachine.Response.INSUFFICIENT_MONEY
+        if res > self.__coins2 * self.__coinval2:
+            # using coinval1 == 1
+            self.__coins1 -= res - self.__coins2 * self.__coinval2
+            self.__coins2 = 0
+            self.__balance = 0
+            self.__num2 -= number
+            return VendingMachine.Response.OK
+        if res % self.__coinval2 == 0:
+            self.__coins2 -= res / self.__coinval2
+            self.__balance = 0
+            self.__num2 -= number
+            return VendingMachine.Response.OK
+        if self.__coins1 == 0:
+            return VendingMachine.Response.UNSUITABLE_CHANGE
+        self.__coins1 -= res // self.__coinval2
+        self.__coins2 -= 1
+        self.__balance = 0
+        self.__num2 -= number
+        return VendingMachine.Response.OK
+
+Данные для которых наблюдается некоректное поведение:
+
+Устанавлина цена на продукт 2 в виде 2, продукт 2 был заполнен. Автомат был запонен 1 монетой номиналом 1 и 4 монетами номинала 2.
+После ыбли внесены 9 монет номиналом 1 и успешно куплен один товар 2. Вызвана функция getCoins1() в режиме отладки
+
+Полученный результат: 7
+Ожиадемый результат: 9
+
+Код после исправления:
+
+    def giveProduct2(self, number: int):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if number <= 0 or number > self.__max2:
+            return VendingMachine.Response.INVALID_PARAM
+        if number > self.__num2:
+            return VendingMachine.Response.INSUFFICIENT_PRODUCT
+
+        res = self.__balance - number * self.__price2
+        if res < 0:
+            return VendingMachine.Response.INSUFFICIENT_MONEY
+        if res > self.__coins1 * self.__coinval1 + self.__coins2 * self.__coinval2:
+            return VendingMachine.Response.INSUFFICIENT_MONEY
+        if res > self.__coins2 * self.__coinval2:
+            # using coinval1 == 1
+            self.__coins1 -= res - self.__coins2 * self.__coinval2
+            self.__coins2 = 0
+            self.__balance = 0
+            self.__num2 -= number
+            return VendingMachine.Response.OK
+        if res % self.__coinval2 == 0:
+            self.__coins2 -= res / self.__coinval2
+            self.__balance = 0
+            self.__num2 -= number
+            return VendingMachine.Response.OK
+        if self.__coins1 == 0:
+            return VendingMachine.Response.UNSUITABLE_CHANGE
+        self.__coins1 -= 1
+        self.__coins2 -= res // self.__coinval2
+        self.__balance = 0
+        self.__num2 -= number
+        return VendingMachine.Response.OK
+
+
+Часть ветвлений кода не удалось покрыть так как в принципе серого ящика невозможно менять поля в рамках теста напрямую,
+ в следствии чего часть полей доступно дял изменения только в функциях режима ADMINISTERING а часть только OPERATION и если переход из режима ADMINISTERING в OPERATION доступен всегда,
+ то переход из режима OPERATION в ADMINISTERING не доступен если были внесены покупателем средства. В следствии этого часть ветвлений стало недоступно для тестирования.
+
+
+Итоговый код после всех исправлений:
+
+class VendingMachine:
+    class Mode:
+        OPERATION = 1
+        ADMINISTERING = 2
+
+    class Response:
+        OK = 1
+        ILLEGAL_OPERATION = 2
+        INVALID_PARAM = 3
+        CANNOT_PERFORM = 4
+        TOO_BIG_CHANGE = 5
+        UNSUITABLE_CHANGE = 6
+        INSUFFICIENT_PRODUCT = 7
+        INSUFFICIENT_MONEY = 8
+
+    __coinval1 = 1
+    __coinval2 = 2
+
+    def __init__(self):
+        self.__id = 117345294655382
+        self.__mode = VendingMachine.Mode.OPERATION
+        # max amount of product 1 and 2
+        self.__max1 = 30
+        self.__max2 = 40
+        # current amount of product 1 and 2
+        self.__num1 = 0
+        self.__num2 = 0
+        # price of product 1 and 2
+        self.__price1 = 8
+        self.__price2 = 5
+        # coins storage capacity for coins 1 and 2
+        self.__maxc1 = 50
+        self.__maxc2 = 50
+        # current amount of coins 1 and 2
+        self.__coins1 = 0
+        self.__coins2 = 0
+        self.__balance = 0
+
+    def getNumberOfProduct1(self):
+        return self.__num1
+
+    def getNumberOfProduct2(self):
+        return self.__num2
+
+    def getCurrentBalance(self):
+        return self.__balance
+
+    def getCurrentMode(self):
+        return self.__mode
+
+    def getCurrentSum(self):
+        if self.__mode == VendingMachine.Mode.OPERATION:
+            return 0
+        return self.__coins1 * self.__coinval1 + self.__coins2 * self.__coinval2
+
+    def getCoins1(self):
+        if self.__mode == VendingMachine.Mode.OPERATION:
+            return 0
+        return self.__coins1
+
+    def getCoins2(self):
+        if self.__mode == VendingMachine.Mode.OPERATION:
+            return 0
+        return self.__coins2
+
+    def getPrice1(self):
+        return self.__price1
+
+    def getPrice2(self):
+        return self.__price2
+
+    def fillProducts(self):
+        if self.__mode != VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        self.__num1 = self.__max1
+        self.__num2 = self.__max2
+        return VendingMachine.Response.OK
+
+    def fillCoins(self, c1: int, c2: int):
+        if self.__mode == VendingMachine.Mode.OPERATION:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if c1 <= 0 or c1 > self.__maxc1:
+            return VendingMachine.Response.INVALID_PARAM
+        if c2 <= 0 or c2 > self.__maxc2:
+            return VendingMachine.Response.INVALID_PARAM
+        self.__coins1 = c1
+        self.__coins2 = c2
+        return VendingMachine.Response.OK
+
+    def enterAdminMode(self, code: int):
+        if self.__balance != 0:
+            return VendingMachine.Response.CANNOT_PERFORM
+        if code != self.__id:
+            return VendingMachine.Response.INVALID_PARAM
+        self.__mode = VendingMachine.Mode.ADMINISTERING
+        return VendingMachine.Response.OK
+
+    def exitAdminMode(self):
+        self.__mode = VendingMachine.Mode.OPERATION
+
+    def setPrices(self, p1: int, p2: int):
+        if self.__mode == VendingMachine.Mode.OPERATION:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if p1 <= 0 or p2 <= 0:
+            return VendingMachine.Response.INVALID_PARAM
+        self.__price1 = p1
+        self.__price2 = p2
+        return VendingMachine.Response.OK
+
+    def putCoin1(self):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if self.__coins1 == self.__maxc1:
+            return VendingMachine.Response.CANNOT_PERFORM
+        self.__balance += self.__coinval1
+        self.__coins1 += 1
+        return VendingMachine.Response.OK
+
+    def putCoin2(self):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if self.__coins2 == self.__maxc2:
+            return VendingMachine.Response.CANNOT_PERFORM
+        self.__balance += self.__coinval2
+        self.__coins2 += 1
+        return VendingMachine.Response.OK
+
+    def returnMoney(self):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if self.__balance == 0:
+            return VendingMachine.Response.OK
+        if self.__balance > self.__coins1 * self.__coinval1 + self.__coins2 * self.__coinval2:
+            return VendingMachine.Response.TOO_BIG_CHANGE
+        if self.__balance > self.__coins2 * self.__coinval2:
+            # using coinval1 == 1
+            self.__coins1 -= self.__balance - self.__coins2 * self.__coinval2
+            self.__coins2 = 0
+            self.__balance = 0
+            return VendingMachine.Response.OK
+        if self.__balance % self.__coinval2 == 0:
+            self.__coins2 -= self.__balance // self.__coinval2
+            self.__balance = 0
+            return VendingMachine.Response.OK
+        if self.__coins1 == 0:
+            # using coinval1 == 1
+            return VendingMachine.Response.UNSUITABLE_CHANGE
+        # using coinval1 == 1
+        self.__coins1 -= 1
+        self.__coins2 -= self.__balance // self.__coinval2
+        self.__balance = 0
+        return VendingMachine.Response.OK
+
+    def giveProduct1(self, number: int):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if number <= 0 or number > self.__max1:
+            return VendingMachine.Response.INVALID_PARAM
+        if number > self.__num1:
+            return VendingMachine.Response.INSUFFICIENT_PRODUCT
+
+        res = self.__balance - number * self.__price1
+        if res < 0:
+            return VendingMachine.Response.INSUFFICIENT_MONEY
+        if res > self.__coins1 * self.__coinval1 + self.__coins2 * self.__coinval2:
+            return VendingMachine.Response.TOO_BIG_CHANGE
+        if res > self.__coins2 * self.__coinval2:
+            # using coinval1 == 1
+            self.__coins1 -= res - self.__coins2 * self.__coinval2
+            self.__coins2 = 0
+            self.__balance = 0
+            self.__num1 -= number
+            return VendingMachine.Response.OK
+        if res % self.__coinval2 == 0:
+            self.__coins2 -= res / self.__coinval2
+            self.__balance = 0
+            self.__num1 -= number
+            return VendingMachine.Response.OK
+        if self.__coins1 == 0:
+            return VendingMachine.Response.UNSUITABLE_CHANGE
+        self.__coins1 -= 1
+        self.__coins2 -= res // self.__coinval2
+        self.__balance = 0
+        self.__num1 -= number
+        return VendingMachine.Response.OK
+
+    def giveProduct2(self, number: int):
+        if self.__mode == VendingMachine.Mode.ADMINISTERING:
+            return VendingMachine.Response.ILLEGAL_OPERATION
+        if number <= 0 or number > self.__max2:
+            return VendingMachine.Response.INVALID_PARAM
+        if number > self.__num2:
+            return VendingMachine.Response.INSUFFICIENT_PRODUCT
+
+        res = self.__balance - number * self.__price2
+        if res < 0:
+            return VendingMachine.Response.INSUFFICIENT_MONEY
+        if res > self.__coins1 * self.__coinval1 + self.__coins2 * self.__coinval2:
+            return VendingMachine.Response.INSUFFICIENT_MONEY
+        if res > self.__coins2 * self.__coinval2:
+            # using coinval1 == 1
+            self.__coins1 -= res - self.__coins2 * self.__coinval2
+            self.__coins2 = 0
+            self.__balance = 0
+            self.__num2 -= number
+            return VendingMachine.Response.OK
+        if res % self.__coinval2 == 0:
+            self.__coins2 -= res / self.__coinval2
+            self.__balance = 0
+            self.__num2 -= number
+            return VendingMachine.Response.OK
+        if self.__coins1 == 0:
+            return VendingMachine.Response.UNSUITABLE_CHANGE
+        self.__coins1 -= 1
+        self.__coins2 -= res // self.__coinval2
+        self.__balance = 0
+        self.__num2 -= number
+        return VendingMachine.Response.OK
